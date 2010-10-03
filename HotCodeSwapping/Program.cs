@@ -13,31 +13,28 @@ namespace HotCodeSwapping
         private const string AssemblyName = "ReallyCoolCode";
         private const string TypeName = "ReallyCoolCode.SayHelloBootStrapper";
 
-        private static readonly TimeBasedThreshold threshold = new TimeBasedThreshold(TimeSpan.FromSeconds(3));
-        private static UnloadAction OnStop = null;
+        private static readonly Threshold Threshold = new Threshold(TimeSpan.FromSeconds(3));
+        private static UnloadAction onStop;
 
         public static void Main()
         {
             FileSystemEventHandler codeChanged = (sender, args) =>
             {
-                if (threshold.EventIsUnderThreshold())
+                if (Threshold.EventIsUnderThreshold())
                     return;
 
                 Console.WriteLine("Code changed");
-                ThreadPool.QueueUserWorkItem(o =>
-                {
-                    OnStop();
-                });
+                ThreadPool.QueueUserWorkItem(o => onStop());
 
-                OnStop = CreateDomainAndStartExecuting();
+                onStop = CreateDomainAndStartExecuting();
             };
 
-            FileSystemWatcher watcher = new FileSystemWatcher(CodePath, "ReallyCoolCode.dll");
+            var watcher = new FileSystemWatcher(CodePath, "ReallyCoolCode.dll");
             watcher.Changed += codeChanged;
             watcher.Created += codeChanged;
             watcher.EnableRaisingEvents = true;
 
-            OnStop = CreateDomainAndStartExecuting();
+            onStop = CreateDomainAndStartExecuting();
 
             Console.Read();
         }

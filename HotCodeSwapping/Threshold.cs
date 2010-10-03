@@ -2,19 +2,19 @@
 
 namespace HotCodeSwapping
 {
-    public class TimeBasedThreshold
+    public class Threshold
     {
-        private readonly TimeSpan threshold;
+        private readonly TimeSpan duration;
         private DateTime lastChanged = DateTime.MinValue;
 
-        public TimeBasedThreshold(TimeSpan threshold)
+        public Threshold(TimeSpan duration)
         {
-            this.threshold = threshold;
+            this.duration = duration;
         }
 
         public bool EventIsUnderThreshold()
         {
-            if ((DateTime.UtcNow - lastChanged) < threshold)
+            if ((DateTime.UtcNow - lastChanged) < duration)
                 return true;
 
             lastChanged = DateTime.UtcNow;

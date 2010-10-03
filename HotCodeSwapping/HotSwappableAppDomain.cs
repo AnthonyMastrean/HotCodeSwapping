@@ -8,7 +8,7 @@ namespace HotCodeSwapping
 
         public HotSwappableAppDomain(string codePath)
         {
-            this.domain = AppDomain.CreateDomain("foo", null, new AppDomainSetup
+            domain = AppDomain.CreateDomain("foo", null, new AppDomainSetup
             {
                 ApplicationBase = codePath,
                 ShadowCopyFiles = "true",
