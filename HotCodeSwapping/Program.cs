@@ -18,25 +18,25 @@ namespace HotCodeSwapping
 
         public static void Main()
         {
-            FileSystemEventHandler codeChanged = (sender, args) =>
-            {
-                if (Threshold.EventIsUnderThreshold())
-                    return;
-
-                Console.WriteLine("Code changed");
-                ThreadPool.QueueUserWorkItem(o => onStop());
-
-                onStop = CreateDomainAndStartExecuting();
-            };
-
             var watcher = new FileSystemWatcher(CodePath, "ReallyCoolCode.dll");
-            watcher.Changed += codeChanged;
-            watcher.Created += codeChanged;
+            watcher.Changed += OnCodeChanged;
+            watcher.Created += OnCodeChanged;
             watcher.EnableRaisingEvents = true;
 
             onStop = CreateDomainAndStartExecuting();
 
             Console.Read();
+        }
+
+        private static void OnCodeChanged(object sender, FileSystemEventArgs args)
+        {
+            if(Threshold.EventIsUnderThreshold())
+                return;
+
+            Console.WriteLine("Code changed");
+            ThreadPool.QueueUserWorkItem(o => onStop());
+
+            onStop = CreateDomainAndStartExecuting();
         }
 
         private static UnloadAction CreateDomainAndStartExecuting()
